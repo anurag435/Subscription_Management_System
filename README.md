@@ -93,36 +93,39 @@ subscription-management-system/
 ## ⚡ Quick Start & Setup
 
 ### Prerequisites
-* **Node.js:** v18.x or v20.x or higher
-* **MongoDB:** Local instance on port `27017` or MongoDB Atlas URI
+* **Node.js:** v18.x, v20.x, or v22.x
+* **MongoDB:** Local MongoDB daemon on port `27017` or MongoDB Atlas cloud URI
 
-### 1. Backend Setup
+### 1. Root Monorepo Setup (Fastest)
+From the root project directory:
+```bash
+# 1. Install all dependencies for both client & server
+npm run install:all
+
+# 2. Seed the database with demo accounts, catalog, plans & subscriptions
+npm run seed
+
+# 3. Start the backend server (runs on http://localhost:5000)
+npm run server
+
+# 4. In a second terminal, start the frontend (runs on http://localhost:5173)
+npm run client
+```
+
+### 2. Manual Setup (Per-Service)
+#### Backend Setup:
 ```bash
 cd server
 npm install
-
-# Configure environment variables
-cp .env.example .env
-
-# Seed standard demo dataset
 npm run seed
-```
-
-To start the backend server in development mode:
-```bash
 npm run dev
 # Server runs on http://localhost:5000
 ```
 
-### 2. Frontend Setup
+#### Frontend Setup:
 ```bash
 cd client
 npm install
-
-# Configure client environment
-cp .env.example .env
-
-# Start Vite development server
 npm run dev
 # Client runs on http://localhost:5173
 ```
