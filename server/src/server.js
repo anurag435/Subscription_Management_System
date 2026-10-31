@@ -1,11 +1,15 @@
 import app from './app.js';
 import { connectDB } from './config/db.js';
 import { ENV } from './config/env.js';
+import { initCronJobs } from './jobs/billingCron.js';
 
 const startServer = async () => {
   try {
     // Connect to database
     await connectDB();
+
+    // Start background cron jobs (Recurring billing & overdue monitor)
+    initCronJobs();
 
     const server = app.listen(ENV.PORT, () => {
       console.log(`===============================================`);
