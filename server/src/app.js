@@ -3,9 +3,16 @@ import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { ENV } from './config/env.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const clientDistPath = path.resolve(__dirname, '../../client/dist');
 
 // Route imports
 import authRoutes from './routes/authRoutes.js';
@@ -23,8 +30,18 @@ import reportRoutes from './routes/reportRoutes.js';
 
 const app = express();
 
-// Security middleware
-app.use(helmet());
+// Security middleware (configured to allow Vite frontend assets and web fonts)
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
+// Serve compiled React frontend assets when available (production mode / built client)
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+}
 
 // CORS configuration allowing cookies/credentials
 app.use(
@@ -176,6 +193,17 @@ app.use('/api/v1/templates', templateRoutes);
 app.use('/api/v1/invoices', invoiceRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/reports', reportRoutes);
+
+// SPA client-side fallback (serve React app for non-API web routes)
+if (fs.existsSync(clientDistPath)) {
+  app.get('*', (req, res, next) => {
+    // Let API and health check requests pass through to API 404 handler
+    if (req.originalUrl.startsWith('/api') || req.originalUrl.startsWith('/health')) {
+      return next();
+    }
+    return res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
 
 // 404 handler for unknown routes
 app.use('*', (req, res) => {

@@ -1,0 +1,30 @@
+{
+  "name": "subscription-management-system",
+  "version": "1.0.0",
+  "description": "Production-grade Subscription Management System for Brightloop Software (MERN Stack)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "install:server": "npm install --prefix server",
+    "install:client": "npm install --prefix client",
+    "install:all": "npm run install:server && npm run install:client",
+    "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
+    "render-build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
+    "start": "node server/src/server.js",
+    "server": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client",
+    "seed": "npm run seed --prefix server",
+    "seed:5k": "npm run seed:5k --prefix server"
+  },
+  "keywords": [
+    "subscription-management",
+    "recurring-billing",
+    "invoicing",
+    "mern-stack",
+    "react",
+    "nodejs",
+    "mongodb"
+  ],
+  "author": "Brightloop Software",
+  "license": "MIT"
+}

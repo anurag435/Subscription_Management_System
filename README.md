@@ -220,6 +220,55 @@ All REST endpoints follow the standardized response shape:
 
 ---
 
+## 🚀 Cloud Deployment to Render
+
+This project is configured for **1-click Unified Deployment** on [Render](https://render.com), running both the Node.js API and the compiled React frontend from a single web service.
+
+### Option A: Automatic Blueprint Deployment (Recommended)
+1. Push this repository to your GitHub account.
+2. In the [Render Dashboard](https://dashboard.render.com), click **New +** and select **Blueprint**.
+3. Connect your GitHub repository. Render will automatically detect [`render.yaml`](render.yaml) and configure:
+   - **Build Command:** `npm run render-build`
+   - **Start Command:** `npm start`
+   - **Health Check Path:** `/health`
+4. When prompted for environment variables:
+   - Provide your **`MONGO_URI`** (e.g. from a free [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) cluster).
+   - `JWT_SECRET` is generated automatically by Render.
+5. Click **Apply**. Your app will build, bundle, and go live on your free Render URL (e.g., `https://brightloop-sms.onrender.com`).
+
+### Option B: Manual Web Service on Render
+1. Click **New +** ➔ **Web Service**.
+2. Select your repository.
+3. Configure the settings:
+   - **Runtime:** `Node`
+   - **Build Command:** `npm run render-build`
+   - **Start Command:** `npm start`
+4. Add the following **Environment Variables** in the Render settings:
+   - `NODE_ENV`: `production`
+   - `MONGO_URI`: `mongodb+srv://<username>:<password>@cluster0.mongodb.net/brightloop_subscriptions?retryWrites=true&w=majority`
+   - `JWT_SECRET`: `your_secure_jwt_secret_key_here`
+   - `JWT_EXPIRES_IN`: `7d`
+5. Click **Deploy Web Service**.
+
+---
+
+## 🐳 Docker Container Deployment
+
+Run the complete full-stack system (Node API + React Frontend + MongoDB 6.0) locally or on any cloud VPS using Docker Compose:
+
+```bash
+# Build and run containers in detached mode
+docker compose up -d --build
+
+# Verify running containers
+docker compose ps
+
+# Access application
+# Open browser at: http://localhost:5000
+```
+
+---
+
 ## 🔒 Security Best Practices
 
 1. **Password Enforcement:** Server and client enforce a 9+ character password containing uppercase, lowercase, and special characters. Passwords are salted and hashed using `bcryptjs` and stripped from JSON queries.

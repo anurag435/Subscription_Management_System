@@ -1,0 +1,9 @@
+node_modules
+client/node_modules
+server/node_modules
+.mongo-data
+.git
+.env
+dist
+client/dist
+npm-debug.log
