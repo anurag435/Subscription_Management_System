@@ -22,10 +22,16 @@ export const Login = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
+
+  const handleQuickLogin = (email, password) => {
+    setValue('email', email, { shouldValidate: true });
+    setValue('password', password, { shouldValidate: true });
+  };
 
   const onSubmit = async (data) => {
     try {
@@ -99,6 +105,39 @@ export const Login = () => {
             Sign In
           </Button>
         </form>
+
+        {/* Quick Demo Autofill Section */}
+        <div className="mt-6 pt-5 border-t border-slate-200">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2.5 text-center">
+            ⚡ Quick Demo Logins (Click to autofill)
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              onClick={() => handleQuickLogin('admin@brightloop.com', 'Admin@12345!')}
+              className="px-2 py-2 text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg border border-indigo-200 text-center transition flex flex-col items-center gap-0.5"
+            >
+              <span className="text-sm">👑</span>
+              <span>Admin</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickLogin('staff@brightloop.com', 'Staff@12345!')}
+              className="px-2 py-2 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg border border-emerald-200 text-center transition flex flex-col items-center gap-0.5"
+            >
+              <span className="text-sm">💼</span>
+              <span>Staff</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickLogin('customer@acme.com', 'Customer@12345!')}
+              className="px-2 py-2 text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg border border-amber-200 text-center transition flex flex-col items-center gap-0.5"
+            >
+              <span className="text-sm">👤</span>
+              <span>Customer</span>
+            </button>
+          </div>
+        </div>
 
         <div className="mt-6 text-center text-xs text-slate-500">
           Don&apos;t have an account yet?{' '}

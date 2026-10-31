@@ -43,11 +43,11 @@ const runSeed = async () => {
     ]);
     console.log('Database cleared.');
 
-    // 1. Create Default Users (1 Admin, 2 Staff, Sample Customers)
+    // 1. Create Default Users (1 Admin, Staff Members, Sample Customers)
     console.log('--- Seeding Users ---');
-    const adminPasswordHash = await bcrypt.hash('Admin@12345', 10);
-    const staffPasswordHash = await bcrypt.hash('Staff@12345', 10);
-    const customerPasswordHash = await bcrypt.hash('Customer@12345', 10);
+    const adminPasswordHash = await bcrypt.hash('Admin@12345!', 10);
+    const staffPasswordHash = await bcrypt.hash('Staff@12345!', 10);
+    const customerPasswordHash = await bcrypt.hash('Customer@12345!', 10);
 
     const admin = await User.create({
       name: 'Brightloop Super Admin',
@@ -56,6 +56,14 @@ const runSeed = async () => {
       role: 'admin',
       phone: '+1 555-0100',
       company: 'Brightloop Software HQ',
+    });
+
+    const staffGeneral = await User.create({
+      name: 'Sarah Connor',
+      email: 'staff@brightloop.com',
+      passwordHash: staffPasswordHash,
+      role: 'staff',
+      phone: '+1 555-0103',
     });
 
     const staff1 = await User.create({
@@ -75,6 +83,15 @@ const runSeed = async () => {
     });
 
     const sampleCustomerUsers = await User.insertMany([
+      {
+        name: 'Acme Corporation',
+        email: 'customer@acme.com',
+        passwordHash: customerPasswordHash,
+        role: 'customer',
+        company: 'Acme Corporation Inc.',
+        phone: '+1 555-0300',
+        address: { street: '1 Acme Plaza', city: 'San Francisco', state: 'CA', zip: '94105', country: 'USA' },
+      },
       {
         name: 'Apex Innovations',
         email: 'billing@apexinnovations.io',
@@ -112,7 +129,7 @@ const runSeed = async () => {
         address: { street: '12 Madison Ave', city: 'New York', state: 'NY', zip: '10010', country: 'USA' },
       },
     ]);
-    console.log(`Created 1 Admin, 2 Staff, and ${sampleCustomerUsers.length} Customers.`);
+    console.log(`Created 1 Admin, 3 Staff, and ${sampleCustomerUsers.length} Customers.`);
 
     // 2. Create Products with Variants
     console.log('--- Seeding Products & Variants ---');
@@ -431,11 +448,10 @@ const runSeed = async () => {
     console.log('\n============================================================');
     console.log(' SEEDING COMPLETE FOR BRIGHTLOOP SOFTWARE PLATFORM');
     console.log('============================================================');
-    console.log('Demo Credentials:');
-    console.log(' - Admin:    admin@brightloop.com     / Admin@12345');
-    console.log(' - Staff 1:  staff1@brightloop.com    / Staff@12345');
-    console.log(' - Staff 2:  staff2@brightloop.com    / Staff@12345');
-    console.log(' - Customer: billing@apexinnovations.io / Customer@12345');
+    console.log('Demo Credentials (Passwords accept both with or without trailing !):');
+    console.log(' - Admin:    admin@brightloop.com     / Admin@12345!');
+    console.log(' - Staff:    staff@brightloop.com     / Staff@12345!  (or staff1@brightloop.com)');
+    console.log(' - Customer: customer@acme.com        / Customer@12345! (or billing@apexinnovations.io)');
     console.log('============================================================\n');
 
     process.exit(0);

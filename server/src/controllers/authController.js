@@ -1,6 +1,12 @@
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
+import { Plan } from '../models/Plan.js';
+import { Product } from '../models/Product.js';
+import { Tax } from '../models/Tax.js';
+import { Subscription } from '../models/Subscription.js';
+import { generateSubscriptionNumber } from '../utils/numberGenerators.js';
+import { generateInvoiceForSubscription } from '../services/billingService.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ENV } from '../config/env.js';
@@ -70,6 +76,55 @@ export const signup = asyncHandler(async (req, res, next) => {
     company: company || '',
     phone: phone || '',
   });
+
+  // Provision initial onboarding trial subscription & invoice so portal has live data
+  try {
+    const defaultPlan = await Plan.findOne({ status: 'active' });
+    const defaultProduct = await Product.findOne();
+    const defaultTax = await Tax.findOne({ isActive: true });
+    if (defaultPlan && defaultProduct) {
+      const subNum = await generateSubscriptionNumber();
+      const variant = defaultProduct.variants?.[0] || { attribute: 'Standard', value: 'Default', extraPrice: 0 };
+      const unitPrice = defaultProduct.salesPrice + (variant.extraPrice || 0);
+      const now = new Date();
+      const expiry = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+      const sub = await Subscription.create({
+        subscriptionNumber: subNum,
+        customer: user._id,
+        plan: defaultPlan._id,
+        startDate: now,
+        expiryDate: expiry,
+        paymentTerms: 'immediate',
+        lines: [
+          {
+            product: defaultProduct._id,
+            variant,
+            quantity: 1,
+            unitPrice,
+            taxes: defaultTax ? [defaultTax._id] : [],
+            amount: unitPrice,
+          },
+        ],
+        recurringSubtotal: defaultPlan.price + unitPrice,
+        status: 'Active',
+        nextBillingDate: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000),
+        statusHistory: [
+          {
+            fromStatus: 'None',
+            toStatus: 'Active',
+            changedBy: user._id,
+            note: 'Onboarding Welcome Subscription',
+            changedAt: now,
+          },
+        ],
+      });
+
+      await generateInvoiceForSubscription(sub);
+    }
+  } catch (seedErr) {
+    console.warn('[Onboarding Notice]: Initial starter subscription skipped:', seedErr.message);
+  }
 
   sendTokenResponse(user, 201, res, 'Account created successfully');
 });
