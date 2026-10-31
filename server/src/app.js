@@ -11,6 +11,10 @@ import { apiLimiter } from './middleware/rateLimiter.js';
 import authRoutes from './routes/authRoutes.js';
 import staffRoutes from './routes/staffRoutes.js';
 import customerRoutes from './routes/customerRoutes.js';
+import productRoutes from './routes/productRoutes.js';
+import planRoutes from './routes/planRoutes.js';
+import taxRoutes from './routes/taxRoutes.js';
+import discountRoutes from './routes/discountRoutes.js';
 
 const app = express();
 
@@ -66,6 +70,10 @@ app.get('/health', (req, res) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/staff', staffRoutes);
 app.use('/api/v1/customers', customerRoutes);
+app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/plans', planRoutes);
+app.use('/api/v1/taxes', taxRoutes);
+app.use('/api/v1/discounts', discountRoutes);
 
 // 404 handler for unknown routes
 app.use('*', (req, res) => {
