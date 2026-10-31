@@ -18,6 +18,7 @@ import discountRoutes from './routes/discountRoutes.js';
 import subscriptionRoutes from './routes/subscriptionRoutes.js';
 import templateRoutes from './routes/templateRoutes.js';
 import invoiceRoutes from './routes/invoiceRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 
 const app = express();
 
@@ -80,6 +81,7 @@ app.use('/api/v1/discounts', discountRoutes);
 app.use('/api/v1/subscriptions', subscriptionRoutes);
 app.use('/api/v1/templates', templateRoutes);
 app.use('/api/v1/invoices', invoiceRoutes);
+app.use('/api/v1/payments', paymentRoutes);
 
 // 404 handler for unknown routes
 app.use('*', (req, res) => {
