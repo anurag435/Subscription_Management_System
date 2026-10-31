@@ -27,3 +27,18 @@ export async function getNextSequenceValue(prefix, padLength = 6) {
     return `${prefix}-${randomHex}`;
   }
 }
+
+/**
+ * Convenience helper generators
+ */
+export async function generateSubscriptionNumber() {
+  return getNextSequenceValue('SUB', 6);
+}
+
+export async function generateInvoiceNumber() {
+  return getNextSequenceValue('INV', 6);
+}
+
+export async function generatePaymentNumber() {
+  return getNextSequenceValue('PAY', 6);
+}
